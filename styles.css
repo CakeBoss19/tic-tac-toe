@@ -1,3 +1,31 @@
 HTML, body {
-  font-family: '';
+  font-family: 'roboto-sans';
 }
+
+body{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+#game-grid{
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  width: 300px;
+  height: 300px;
+}
+
+#score-board{
+  display: flex;
+  gap: 15px;
+}
+
+.cell {
+  text-align: center;
+  align-self: center;
+  width: 100%;
+  height: 100%;
+}
+
