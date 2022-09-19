@@ -1,41 +1,33 @@
-//STEP ONE:
-//Store the gameboard in an array inside of a Gameboard object.
-//try and make the game functional without html and css
+const X_CLASS = 'x';
+const CIRCLE_CLASS = 'circle';
+const cellElements = document.querySelectorAll('[data-cell]');
+const board = document.getElementById('board');
+let circleTurn = false;
 
-//STEP TWO:
-//Players are going to be stored in objects as well
+cellElements.forEach(cell => {
+  cell.addEventListener('click', handleClick, { once: true })
+});
 
-function makeBoard(){
-  const board_div = document.getElementById('game-grid');
-  for(let i = 0; i < 3; i++){
-    let row = document.createElement('div');
-    for(let i = s0; i < 3; i++){
-      let cell = doucment.createElement('div');
-      row.appendChild(cell);
-    }
-  };
+function handleClick(e){
+  const cell = e.target;
+  const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS;
+  placeMark(cell, currentClass);
+  swapTurns();
+  swapBoard();
+  // Check for win
+  // Check for draw
 };
 
-let makeBoard = (function(){
-  //code here:
-})();
+function placeMark(cell, currentClass){
+  cell.classList.add(currentClass);
+};
 
-const Gameboard = (function() {
-  const boardArr = [
-  ' ', ' ', ' ',
-  ' ', ' ', ' ',
-  ' ', ' ', ' ',
-  ];
-  return {
-    showArray: (() => {
-      boardArr.forEach((spot) => {
-        if(spot = ' '){
-          spot = 'It works!';
-        };
-        console.log(spot);
-      });
-    })
-  };
-})();
+function swapTurns(){
+  circleTurn = !circleTurn;
+};
 
-Gameboard.showArray();
+function swapBoard(){
+  const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS;
+  board.classList = '';
+  board.classList = `board ${currentClass}`;  
+}

@@ -1,31 +1,130 @@
-HTML, body {
-  font-family: 'roboto-sans';
+*, *::after, *::before {  /*Essentially targets everything.*/
+  box-sizing: border-box; /*Makes styling widths and heights much easier*/
 }
 
-body{
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: auto;
+/*Create custom variable to re-use throught the code */
+:root {
+  --cell-size: 100px;
+  --mark-size: calc(var(--cell-size) * .9);  /*Ensures sizes of cell CONTENT is slightly smaller than cell size*/
 }
 
-#game-grid{
+/* Defines grid/cell size and centers */
+.board {
+  width: 100vw;
+  height: 100vh;
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  width: 300px;
-  height: 300px;
+  justify-content: center; 
+  align-content: center;  /*^^Centers the board to the middle of the page^^*/
+  justify-items: center;
+  align-items: center;  /*^^Centers the contents inside of the cells^^*/
+  grid-template-columns: repeat(3, auto);
 }
 
-#score-board{
+.cell{
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 1px solid black;
   display: flex;
-  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
 }
 
-.cell {
-  text-align: center;
-  align-self: center;
-  width: 100%;
-  height: 100%;
+ 
+/* Targets all the outer walls and deletes them */
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3) {
+  border-top: none;
 }
 
+.cell:first-child,
+.cell:nth-child(4),
+.cell:nth-child(7) {
+  border-left: none;
+}
+
+.cell:nth-child(7),
+.cell:nth-child(8),
+.cell:nth-child(9) {
+  border-bottom: none;
+}
+
+.cell:nth-child(3),
+.cell:nth-child(6),
+.cell:nth-child(9) {
+  border-right: none;
+}
+
+/* element:not((class)) makes sure that if it has a certain class, the code will omit the element */
+
+/* Creates X and O symbols without the need for actual text*/
+.cell.x::after,
+.cell.x::before,
+.board.x .cell:not(.x):not(.circle):hover::before,
+.board.x .cell:not(.x):not(.circle):hover::after{
+   content: ''; /*Ensures the content renders */
+   width: calc(var(--mark-size) * .15);
+   height: var(--mark-size);
+   position: absolute;
+}
+
+
+.cell.x::after,
+.cell.x::before,
+.cell.circle::after,
+.cell.circle::before{
+  background-color: black;
+}
+
+.board.x .cell:not(.x):not(.circle):hover::before,
+.board.x .cell:not(.x):not(.circle):hover::after,
+.board.circle .cell:not(.x):not(.circle):hover::before,
+.board.circle .cell:not(.x):not(.circle):hover::after {
+  background-color: lightgray;
+}
+
+
+/* Rotates in opposite directions to form an X */
+.cell.x::after,
+.board.x .cell:not(.x):not(.circle):hover::after{
+  transform: rotate(45deg);
+}
+
+.cell.x::before,
+.board.x .cell:not(.x):not(.circle):hover:before {
+  transform: rotate(-45deg);
+}
+
+/* Ensures user cannot reselect an already selected cell */
+.cell.x,
+.cell.circle{
+  cursor: not-allowed;
+}
+
+
+.cell.circle::after,
+.cell.circle::before,
+.board.circle .cell:not(.x):not(.circle):hover::before,
+.board.circle .cell:not(.x):not(.circle):hover::after{
+   content: ''; /*Ensures the content renders */
+   width: var(--mark-size);
+   height: var(--mark-size);
+   position: absolute;
+   border-radius: 50%;
+}
+
+
+.cell.circle::before,
+.board.circle .cell:not(.x):not(.circle):hover::before {
+  width: var(--mark-size);
+  height: var(--mark-size);
+}
+
+.cell.circle::after,
+.board.circle .cell:not(.x):not(.circle):hover::after {
+  width: calc(var(--mark-size) * .7);
+  height: calc(var(--mark-size) * .7);
+  background-color: white;
+}
