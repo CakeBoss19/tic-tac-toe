@@ -1,45 +1,41 @@
-// const X_CLASS = 'x';
-// const CIRCLE_CLASS = 'circle';
-// const cellElements = document.querySelectorAll('[data-cell]');
-// let circleTurn;
+const cssChanges = (() => {
+  function placeMark(cell, currentClass){
+    cell.classList.add(currentClass);
+  }
 
+  function boardClasses(){
+    if(board.classList == 'board x'){
+      board.classList.replace('x', 'circle');
+    } else{
+      board.classList.replace('circle', 'x');
+    };
+  }
+  return {placeMark, boardClasses};
+})();
 
-// cellElements.forEach(cell => {
-//   cell.addEventListener('click', handleClick, { once: true })
-// });
-// function handleClick(e){
-//   const cell = e.target;
-//   const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS;
-//   placeMark(cell, currentClass);
-//   swapTurns();
-// };
+const playerCreator = ((player) => {
 
-// function placeMark(cell, currentClass){
-//   cell.classList.add(currentClass)
-// };
-
-// function swapTurns(currentClass){
-//   circleTurn = !circleTurn;
-//   board.classList.add(currentClass);
-// };
-
-
-let playerCreator = ((index) => {
-
-  //if player1 is currently player,
-  //I'm going to want to change zero of the selected spot to a 1;
-  function makeMove(cell){
-    let playerSelection = cell.dataset.cell;
-    gameboard.splice(playerSelection, 1, index);
-    console.log(gameboard);
+  function makeMove(e){
+    const cell = e.target;
+    const cellIndex = cell.dataset.cell;
+    gameboard.splice(cellIndex, 1, (player + 1));
   };
-  return {makeMove};
+
+  function changeDisplay(e){
+    const cell = e.target;
+    const xClass = 'x';
+    const circleClass = 'circle';
+    const currentClass = (!player) ? xClass : circleClass;
+
+    cssChanges.placeMark(cell, currentClass);
+    cssChanges.boardClasses();
+  }
+  return {makeMove, changeDisplay};
 });
 
-
-const cells = document.querySelectorAll(".cell");
-const playerOne = playerCreator(1);
-const playerTwo = playerCreator(2);
+const cellElements = document.querySelectorAll(".cell");
+const playerOne = playerCreator(0);
+const playerTwo = playerCreator(1);
 
 let gameboard = [
   0, 0, 0,
@@ -49,19 +45,25 @@ let gameboard = [
 
 let n = 0;
 
-cells.forEach((cell) => {
+cellElements.forEach((cell) => {
   
   cell.addEventListener('click', (e) => {
     let currentPlayer = getCurrentPlayer();
-    currentPlayer.makeMove(e.target);
-
+    currentPlayer.makeMove(e);
+    currentPlayer.changeDisplay(e);
     // examineBoard(); // checks array to see if any victory conditions have been met.
     n++;
-  });
+  }, {once: true});
 });
 
 
 
 function getCurrentPlayer(){
-  return (n % 2 == 0 ? playerOne : playerTwo)
+  return (n % 2 == 0 ? playerOne : playerTwo);
+}
+
+function examineBoard(){
+  //use a switch statment to determine winning states,
+  //if gameboard[0-2] =1 or 2, win, restart game
+  //different statement for winning condistions. reorganize later
 }
