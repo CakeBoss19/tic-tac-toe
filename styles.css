@@ -8,7 +8,21 @@
   --mark-size: calc(var(--cell-size) * .9);  /*Ensures sizes of cell CONTENT is slightly smaller than cell size*/
 }
 
+form {
+  position: absolute;
+  width: 100%;
+  height: 15%;
+  text-align: center;
+  align-content: center;
+  justify-content: center;
+}
+ul {
+  list-style: none;
+  gap: 15px;
+}
+
 /* Defines grid/cell size and centers */
+
 .board {
   width: 100vw;
   height: 100vh;
@@ -18,6 +32,13 @@
   justify-items: center;
   align-items: center;  /*^^Centers the contents inside of the cells^^*/
   grid-template-columns: repeat(3, auto);
+}
+
+#start-game{
+  justify-content: center; 
+  align-content: center;  /*^^Centers the board to the middle of the page^^*/
+  justify-items: center;
+  align-items: center; 
 }
 
 .cell{
