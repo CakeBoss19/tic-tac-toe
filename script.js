@@ -1,90 +1,119 @@
-const startGame = document.querySelector('#start-game');
+const Gameboard = {
+  gameboard: [0,0,0,0,0,0,0,0,0],
+  reset: () => {
+    gameboard = [0,0,0,0,0,0,0,0,0]
+  }
+};
+function PlayerCreator(player){
+let playerValue = player + 1;
+const gameboard = Gameboard.gameboard;
 
-startGame.addEventListener('click', () => {
+function makeMove(target){
+  gameboard.splice(target.dataset.cell, 1, playerValue);
+};
 
-    function playerCreator(player){ 
-      let playerValue = player + 1;
+function getPlayerName(){
+  const playerOne = document.getElementById('first-player');
+  const playerTwo = document.getElementById('second-player');
+  let playerName;
+  (player == 0) ? playerName = playerOne.value : playerName = playerTwo.value;
+  return playerName;
+};
 
-      const cssChanges = (() => {
-        function placeMark(cell, currentClass){
-          cell.classList.add(currentClass);
-        };
+return {
+  getPlayerName,
+  makeMove,
+  playerValue,
+};
+};
+const displayController = (() => {
 
-        function boardClasses(){
-          if(board.classList == 'board x'){
-            board.classList.replace('x', 'circle');
-          } else{
-            board.classList.replace('circle', 'x');
-          };
-        };
-        return {placeMark, boardClasses};
-      })();
+function emptyCells(){
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach((cell) => {
+    cell.classList = 'cell';
+  })
+};
 
-      function makeMove(e){
-        const cell = e.target;
-        const cellIndex = cell.dataset.cell;
-        gameboard.splice(cellIndex, 1, playerValue);
-      };
+function placeMark(cell, currentClass){
+  cell.classList.add(currentClass);
+};
 
-      function changeDisplay(e){
-        const cell = e.target;
-        const xClass = 'x';
-        const circleClass = 'circle';
-        const currentClass = (!player) ? xClass : circleClass;
-        cssChanges.placeMark(cell, currentClass);
-        cssChanges.boardClasses();
-      };
+function boardClasses(currentClass){
+  const board = document.getElementById('board');
+  (currentClass == 'x') ? board.classList = 'board circle' : board.classList = 'board x';
+};
 
-      function checkForWin(){
-        (gameboard[0] == playerValue && gameboard[1] == playerValue && gameboard[2] == playerValue) ? console.log('top row')
-        :(gameboard[0] == playerValue && gameboard[3] == playerValue && gameboard[6] == playerValue) ? console.log('left column')
-        :(gameboard[0] == playerValue && gameboard[4] == playerValue && gameboard[8] == playerValue) ? console.log('left to right')
-        :(gameboard[1] == playerValue && gameboard[4] == playerValue && gameboard[7] == playerValue) ? console.log('middle column')
-        :(gameboard[2] == playerValue && gameboard[5] == playerValue && gameboard[8] == playerValue) ? console.log('right column')
-        :(gameboard[2] == playerValue && gameboard[4] == playerValue && gameboard[6] == playerValue) ? console.log('right to left')
-        :(gameboard[3] == playerValue && gameboard[4] == playerValue && gameboard[5] == playerValue) ? console.log('middle row')
-        :(gameboard[6] == playerValue && gameboard[7] == playerValue && gameboard[8] == playerValue) ? console.log('bottom row')
-        : null;
-      };
+function toggleWinner(){
+  const winner = document.getElementById('winning-screen');
+  winner.classList.toggle('invisible');
+};
 
-      return {makeMove, changeDisplay, checkForWin};
-    };
+function congrats(playerObj){
+  const congrats = document.querySelector('.congratulations');
+  const playerName = playerObj.getPlayerName();
+  congrats.textContent = `${playerName}, You Won!`;
+};
 
-    const gameFunctions = (() => {
+return {
+  changeDisplay: (target, playerValue) => {
+    const currentClass = (playerValue == 1) ? 'x' : 'circle';
+    placeMark(target, currentClass);
+    boardClasses(currentClass);
+  },
+  win: (playerObj) => {
+    toggleWinner();
+    congrats(playerObj);
+  },
+  reset: () => {
+    emptyCells();
+    boardClasses('circle');
+    toggleWinner();
+  }, 
+};
+})();
 
-      function win(){
+const gameRules = (() => {
 
-      };
+function checkForWin(player){
+  const playerValue = player.playerValue
+  let gameboard = Gameboard.gameboard;
+  (gameboard[0] == playerValue && gameboard[1] == playerValue && gameboard[2] == playerValue) ? displayController.win(player)
+  :(gameboard[0] == playerValue && gameboard[3] == playerValue && gameboard[6] == playerValue) ? displayController.win(player)
+  :(gameboard[0] == playerValue && gameboard[4] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
+  :(gameboard[1] == playerValue && gameboard[4] == playerValue && gameboard[7] == playerValue) ? displayController.win(player)
+  :(gameboard[2] == playerValue && gameboard[5] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
+  :(gameboard[2] == playerValue && gameboard[4] == playerValue && gameboard[6] == playerValue) ? displayController.win(player)
+  :(gameboard[3] == playerValue && gameboard[4] == playerValue && gameboard[5] == playerValue) ? displayController.win(player)
+  :(gameboard[6] == playerValue && gameboard[7] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
+  : null;
+};
 
-      function getCurrentPlayer(){
-        return (n % 2 == 0 ? playerOne : playerTwo);
-      };
+return {
+  checkForWin,
+  gameReset: () => {
+    Gameboard.reset();
+    displayController.reset();
+  }
+};
+})();
 
-      function resetGame(){
-        console.log('reset game');
-      };
-
-      return {getCurrentPlayer, resetGame, win};
-    })();
-
-
-    const cellElements = document.querySelectorAll(".cell");
-    const playerOne = playerCreator(0);
-    const playerTwo = playerCreator(1);
-    let n = 0;
-    let gameboard = [
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-    ];
-
-    cellElements.forEach((cell) => {
-      cell.addEventListener('click', (e) => {
-        let currentPlayer = gameFunctions.getCurrentPlayer();
-        currentPlayer.makeMove(e);
-        currentPlayer.changeDisplay(e);
-        currentPlayer.checkForWin(); // checks array to see if any victory conditions have been met.
-        n++;
-      }, {once: true});
-    });
+const playGame = (() => {
+const cells = document.querySelectorAll('.cell');
+const player0 = PlayerCreator(0);
+const player1 = PlayerCreator(1);
+n = 0;
+cells.forEach((cell) => {
+  cell.addEventListener('click', (e) => {
+    let currentPlayer = (n % 2 == 0) ? player0 : player1;
+    let value = currentPlayer.playerValue;
+    let target = e.target;
+    currentPlayer.makeMove(target);
+    displayController.changeDisplay(target, value);
+    gameRules.checkForWin(currentPlayer);
+    n++;
+  }, {once: true});
+});          
 });
+
+playGame();
