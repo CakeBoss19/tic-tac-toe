@@ -1,9 +1,10 @@
 const Gameboard = {
   gameboard: [0,0,0,0,0,0,0,0,0],
   reset: () => {
-    gameboard = [0,0,0,0,0,0,0,0,0]
-  }
+    Gameboard.gameboard = [0,0,0,0,0,0,0,0,0];
+  },
 };
+
 function PlayerCreator(player){
 let playerValue = player + 1;
 const gameboard = Gameboard.gameboard;
@@ -26,6 +27,7 @@ return {
   playerValue,
 };
 };
+
 const displayController = (() => {
 
 function emptyCells(){
@@ -49,10 +51,14 @@ function toggleWinner(){
   winner.classList.toggle('invisible');
 };
 
-function congrats(playerObj){
-  const congrats = document.querySelector('.congratulations');
+function gameOverScreen(playerObj){
+  const gameOverScreen = document.querySelector('.congratulations');
+  if(playerObj == 'draw'){
+    gameOverScreen.textContent = 'It\'s a draw!';
+  } else {
   const playerName = playerObj.getPlayerName();
-  congrats.textContent = `${playerName}, You Won!`;
+  gameOverScreen.textContent = `${playerName}, You Won!`;
+  };
 };
 
 return {
@@ -63,7 +69,7 @@ return {
   },
   win: (playerObj) => {
     toggleWinner();
-    congrats(playerObj);
+    gameOverScreen(playerObj);
   },
   reset: () => {
     emptyCells();
@@ -86,6 +92,7 @@ function checkForWin(player){
   :(gameboard[2] == playerValue && gameboard[4] == playerValue && gameboard[6] == playerValue) ? displayController.win(player)
   :(gameboard[3] == playerValue && gameboard[4] == playerValue && gameboard[5] == playerValue) ? displayController.win(player)
   :(gameboard[6] == playerValue && gameboard[7] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
+  :(!gameboard.includes(0)) ? displayController.win('draw')
   : null;
 };
 
@@ -94,6 +101,7 @@ return {
   gameReset: () => {
     Gameboard.reset();
     displayController.reset();
+    playGame();
   }
 };
 })();
@@ -102,16 +110,16 @@ const playGame = (() => {
 const cells = document.querySelectorAll('.cell');
 const player0 = PlayerCreator(0);
 const player1 = PlayerCreator(1);
-n = 0;
+let playerTurn;
 cells.forEach((cell) => {
   cell.addEventListener('click', (e) => {
-    let currentPlayer = (n % 2 == 0) ? player0 : player1;
+    let currentPlayer = (!playerTurn) ? player0 : player1;
     let value = currentPlayer.playerValue;
     let target = e.target;
     currentPlayer.makeMove(target);
     displayController.changeDisplay(target, value);
     gameRules.checkForWin(currentPlayer);
-    n++;
+    playerTurn = !playerTurn;
   }, {once: true});
 });          
 });

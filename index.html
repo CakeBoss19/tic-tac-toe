@@ -8,16 +8,17 @@
   <link rel="stylesheet" href="./styles_fonts_images/fonts/stylesheet.css">
   <link rel="stylesheet" href="./styles.css">
   <script src="./script.js" defer></script>
-  <title>Tic-Tac-Toe PRACTICE</title>
+  <title>Tic-Tac-Toe</title>
 </head>
 <body>
+  <div id="name-input">
+    <label for="first-player">Player One</label>
+    <input type="text" name="first-player" id="first-player" placeholder="Player 1" value="Player 1">
+    
+    <label for="second-player">Player Two</label>
+    <input type="text" name="second-player" id="second-player" placeholder="Player 2" value="Player 2">
+  </div>
 
-  <label for="first-player">Player One</label>
-  <input type="text" name="first-player" id="first-player" placeholder="Player 1" value="Player 1">
-  
-  <label for="second-player">Player Two</label>
-  <input type="text" name="second-player" id="second-player" placeholder="Player 2" value="Player 2">
-   
   <div class="invisible" id="winning-screen">
     <h1>Winner!</h1>
     <p class="congratulations"></p>
