@@ -9,10 +9,6 @@ function PlayerCreator(player){
 let playerValue = player + 1;
 const gameboard = Gameboard.gameboard;
 
-function makeMove(target){
-  gameboard.splice(target.dataset.cell, 1, playerValue);
-};
-
 function getPlayerName(){
   const playerOne = document.getElementById('first-player');
   const playerTwo = document.getElementById('second-player');
@@ -23,7 +19,10 @@ function getPlayerName(){
 
 return {
   getPlayerName,
-  makeMove,
+  alterGameBoard: (target) => {
+    const cellValue = target.dataset.cell;
+    gameboard.splice(cellValue, 1, playerValue);
+  },
   playerValue,
 };
 };
@@ -43,7 +42,7 @@ function placeMark(cell, currentClass){
 
 function boardClasses(currentClass){
   const board = document.getElementById('board');
-  (currentClass == 'x') ? board.classList = 'board circle' : board.classList = 'board x';
+  board.classList = (currentClass == 'x') ? 'board circle' : 'board x';
 };
 
 function toggleWinner(){
@@ -79,25 +78,40 @@ return {
 };
 })();
 
-const gameRules = (() => {
+const gameFlow = (() => {
 
 function checkForWin(player){
   const playerValue = player.playerValue
   let gameboard = Gameboard.gameboard;
-  (gameboard[0] == playerValue && gameboard[1] == playerValue && gameboard[2] == playerValue) ? displayController.win(player)
-  :(gameboard[0] == playerValue && gameboard[3] == playerValue && gameboard[6] == playerValue) ? displayController.win(player)
-  :(gameboard[0] == playerValue && gameboard[4] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
-  :(gameboard[1] == playerValue && gameboard[4] == playerValue && gameboard[7] == playerValue) ? displayController.win(player)
-  :(gameboard[2] == playerValue && gameboard[5] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
-  :(gameboard[2] == playerValue && gameboard[4] == playerValue && gameboard[6] == playerValue) ? displayController.win(player)
-  :(gameboard[3] == playerValue && gameboard[4] == playerValue && gameboard[5] == playerValue) ? displayController.win(player)
-  :(gameboard[6] == playerValue && gameboard[7] == playerValue && gameboard[8] == playerValue) ? displayController.win(player)
-  :(!gameboard.includes(0)) ? displayController.win('draw')
-  : null;
+  if(gameboard[0] == playerValue && gameboard[1] == playerValue && gameboard[2] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[0] == playerValue && gameboard[3] == playerValue && gameboard[6] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[0] == playerValue && gameboard[4] == playerValue && gameboard[8] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[1] == playerValue && gameboard[4] == playerValue && gameboard[7] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[2] == playerValue && gameboard[5] == playerValue && gameboard[8] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[2] == playerValue && gameboard[4] == playerValue && gameboard[6] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[3] == playerValue && gameboard[4] == playerValue && gameboard[5] == playerValue){
+    displayController.win(player);
+  } else if (gameboard[6] == playerValue && gameboard[7] == playerValue && gameboard[8] == playerValue){
+    displayController.win(player);
+  } else if (!gameboard.includes(0)){
+    displayController.win('draw');
+  } else {
+    null;
+  };
 };
 
 return {
   checkForWin,
+  makeMove: (target, value, player) => {
+    player.alterGameBoard(target);
+    displayController.changeDisplay(target, value);
+  },
   gameReset: () => {
     Gameboard.reset();
     displayController.reset();
@@ -115,10 +129,8 @@ cells.forEach((cell) => {
   cell.addEventListener('click', (e) => {
     let currentPlayer = (!playerTurn) ? player0 : player1;
     let value = currentPlayer.playerValue;
-    let target = e.target;
-    currentPlayer.makeMove(target);
-    displayController.changeDisplay(target, value);
-    gameRules.checkForWin(currentPlayer);
+    gameFlow.makeMove(e.target, value, currentPlayer);
+    gameFlow.checkForWin(currentPlayer);
     playerTurn = !playerTurn;
   }, {once: true});
 });          
